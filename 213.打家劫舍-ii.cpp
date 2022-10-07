@@ -1,7 +1,5 @@
 // @before-stub-for-debug-begin
-#include <cstddef>
-#include <string>
-#include <vector>
+#include <bits/stdc++.h>
 
 using namespace std;
 // @before-stub-for-debug-end
