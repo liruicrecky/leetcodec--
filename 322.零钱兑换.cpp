@@ -1,6 +1,5 @@
 // @before-stub-for-debug-begin
 #include <bits/stdc++.h>
-#include <climits>
 
 using namespace std;
 // @before-stub-for-debug-end
