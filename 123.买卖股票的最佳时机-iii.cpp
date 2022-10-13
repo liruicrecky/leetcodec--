@@ -16,7 +16,7 @@ class Solution {
     int maxProfit(vector<int> &prices) {
         int n = prices.size();
         vector<vector<array<int, 2>>> f(n + 1, vector<array<int, 2>>(3));
-
+        
         for (int i = 1; i <= n; i++) {
             for (int k = 2; k > 0; k--) {
                 if (i - 1 == 0) {
