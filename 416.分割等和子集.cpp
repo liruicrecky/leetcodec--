@@ -19,7 +19,6 @@ class Solution {
             return false;
 
         int tar = sum >> 1;
-
         int n = nums.size();
         vector<bool> f(tar + 1, false);
         f[0] = true;
