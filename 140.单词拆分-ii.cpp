@@ -12,25 +12,6 @@ using namespace std;
 
 // @lc code=start
 class Solution {
-  private:
-    void dfs(vector<string> &res, vector<string> &wordDict, string &tmp,
-             vector<bool> &f, int idx) {
-        if (idx == f.size() - 1 && f[idx]) {
-            tmp.pop_back();
-            res.push_back(tmp);
-        } else {
-            for (const auto &word : wordDict) {
-                int sz = word.size();
-                if (idx >= sz && f[idx - sz]) {
-                    tmp.append(word + " ");
-                    cout<< word << " " <<tmp << "\n";
-                    dfs(res, wordDict, tmp, f, idx + sz);
-                    tmp.erase(idx);
-                }
-            }
-        }
-    }
-
   public:
     vector<string> wordBreak(string s, vector<string> &wordDict) {
         int n = s.size();
@@ -39,26 +20,45 @@ class Solution {
         vector<bool> f(n + 1, false);
         f[0] = true;
 
-        for (int i = 1; i <= n; i++) {
-            for (const auto &word : wordDict) {
-                int sz = word.size();
-                if (i >= sz) {
-                    if (f[i - sz] && st.count(s.substr(i - sz, sz))) {
-                        f[i] = true;
-                        break;
+        vector<vector<string>> res;
+        vector<string> tmp;
+
+        function<void(int)> dfs = [&](int idx) {
+            if (idx == n + 1 && f[n]) {
+                res.push_back(tmp);
+                return;
+            }
+
+            for (int i = idx; i <= n; i++) {
+                for (const auto &word : wordDict) {
+                    int sz = word.size();
+                    if (i - idx + 1 >= sz && f[i - sz]) {
+                        auto subWord = s.substr(i - sz, sz);
+                        if (st.count(subWord)) {
+                            f[i] = true;
+                            tmp.push_back(subWord);
+                            dfs(idx + sz);
+                            f[i] = false;
+                            tmp.pop_back();
+                            break; // important
+                        }
                     }
                 }
             }
+        };
+
+        dfs(1);
+
+        vector<string> ans;
+        for (const auto &r : res) {
+            string sub = "";
+            for (const auto &w : r)
+                sub += w + " ";
+            sub.pop_back();
+            ans.push_back(sub);
         }
 
-        if (!f[n])
-            return vector<string>{};
-
-        vector<string> res;
-        string tmp;
-        dfs(res, wordDict, tmp, f, n);
-
-        return res;
+        return ans;
     }
 };
 // @lc code=end
