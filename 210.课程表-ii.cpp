@@ -5,15 +5,16 @@ using namespace std;
 // @before-stub-for-debug-end
 
 /*
- * @lc app=leetcode.cn id=207 lang=cpp
+ * @lc app=leetcode.cn id=210 lang=cpp
  *
- * [207] 课程表
+ * [210] 课程表 II
  */
 
 // @lc code=start
 class Solution {
   private:
-    bool canFinishBFS(int numCourses, vector<vector<int>> &prerequisites) {
+    vector<int> findOrderBFS(int numCourses,
+                             vector<vector<int>> &prerequisites) {
         vector<vector<int>> g(numCourses);
         vector<int> indegree(numCourses, 0);
         for (const auto &edge : prerequisites) {
@@ -28,10 +29,13 @@ class Solution {
         }
 
         int count = 0;
+        vector<int> res;
+
         while (!que.empty()) {
             auto node = que.front();
             que.pop();
-            ++count;
+            res.push_back(node);
+            count++;
             for (const auto &next : g[node]) {
                 indegree[next]--;
                 if (indegree[next] == 0)
@@ -39,34 +43,42 @@ class Solution {
             }
         }
 
-        return count == numCourses;
+        if (count != numCourses)
+            return {};
+        return res;
     }
 
   public:
-    bool canFinish(int numCourses, vector<vector<int>> &prerequisites) {
+    vector<int> findOrder(int numCourses, vector<vector<int>> &prerequisites) {
         vector<vector<int>> g(numCourses);
         for (const auto &pre : prerequisites)
             g[pre[1]].push_back(pre[0]);
 
-        vector<bool> visited(numCourses, false), path(numCourses, false);
         bool cycle = false;
+        vector<bool> path(numCourses), visited(numCourses);
+        vector<int> res;
+
         auto dfs = [&](auto &&self, int x) {
             if (path[x])
                 cycle = true;
             if (visited[x] || cycle)
                 return;
-            visited[x] = true;
             path[x] = true;
+            visited[x] = true;
             for (const auto &ne : g[x])
                 self(self, ne);
+            res.push_back(x);
             path[x] = false;
         };
 
         for (int i = 0; i < numCourses; i++)
             dfs(dfs, i);
 
-        return !cycle;
-        // return canFinishBFS(numCourses, prerequisites);
+        if (cycle)
+            return {};
+        reverse(res.begin(), res.end());
+        return res;
+        // return findOrderBFS(numCourses, prerequisites);
     }
 };
 // @lc code=end
